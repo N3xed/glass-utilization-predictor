@@ -1,5 +1,7 @@
 import pandas as pd
 from pathlib import Path
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 
@@ -39,9 +41,14 @@ for glass_type in ["weisglas","braunglas","grunglas"]:
             temp_dict[data["name"]].update({"population":data["population"]})
     print(temp_dict)
     
-    calculating_list = []
+    x = []
+    y = []
     for value in temp_dict.values():
-        calculating_list.append([value["slope"],value["population"]])
+        x.append(value["slope"])
+        y.append(value["population"])
     
-    print(calculating_list)
+    np_x = np.array(x)
+    np_y = np.array(y)
+    plt.scatter()
+    
     
