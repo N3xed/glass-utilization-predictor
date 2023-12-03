@@ -35,7 +35,7 @@ Füllgeschwindigkeiten und weitere statistische Werte in `results/*_slopes.csv`.
 
 ## Team
 
-Dominik Gschwind, @N3xed
-Cedric Christen, @cedi4155476
-Roman Weiss, @romanweiss123
-Roméo Bornand
+- Dominik Gschwind, @N3xed
+- Cedric Christen, @cedi4155476
+- Roman Weiss, @romanweiss123
+- Roméo Bornand
