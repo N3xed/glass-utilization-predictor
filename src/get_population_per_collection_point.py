@@ -6,6 +6,7 @@ import geoplot
 import json
 import re
 import sys
+import os
 from shapely.geometry import shape, Point, GeometryCollection, MultiPoint, Polygon
 from shapely.ops import voronoi_diagram
 from pathlib import Path
@@ -22,9 +23,16 @@ grunglas_path = "C:/Users/cedri/OneDrive - OST/Hackathon 2023/fuellstandsensoren
 
 basepath = Path("C:/Users/cedri/OneDrive - OST/Hackathon 2023/")
 
+geo_data_folder = Path("geo_data")
+
 weisglas_path = basepath / 'fuellstandsensoren-glassammelstellen-weissglas.csv'
 braunglas_path = basepath / 'fuellstandsensoren-glassammelstellen-braunglas.csv'
 grunglas_path = basepath / 'fuellstandsensoren-glassammelstellen-gruenglas.csv'
+
+
+def clean_name(name):
+    name= name.replace(" | ", "_")
+    return name
 
 
 for glass_type in ["weisglas","braunglas","grunglas"]:
@@ -60,6 +68,8 @@ for glass_type in ["weisglas","braunglas","grunglas"]:
         else:
             location_dict[properties["statistisc"]] = {"geometry": polygon, "population": {}}
     
+        gdf = gpd.GeoDataFrame(index=[0], crs='epsg:4326', geometry=[polygon])
+        gdf.to_file(geo_data_folder / f"wohnquartier_{properties['statistisc']}.shp")
     for index, data in quartier_counts.iterrows():
         location_dict[data["GEBIET_NAME"]]["population"][data["INDIKATOR_JAHR"]] = data["INDIKATOR_VALUE"]
     
@@ -81,19 +91,24 @@ for glass_type in ["weisglas","braunglas","grunglas"]:
     multipoint = MultiPoint(all_points)
     voronoi = voronoi_diagram(multipoint)
     
-    output = Path("testing_output")
     counter = 0
     for polygon in voronoi.geoms:
+        found = False
         for index, point in enumerate(geodata_list):
             if polygon.contains(point["geom"]):
                 geodata_list[index]["polygon"] = polygon
+                cleaned_name = clean_name(geodata_list[index]['name'])
+                gdf = gpd.GeoDataFrame(index=[0], crs='epsg:4326', geometry=[polygon])
+                gdf.to_file(geo_data_folder / f"voronoi_{cleaned_name}.shp")
+                gdf = gpd.GeoDataFrame(index=[0], crs='epsg:4326', geometry=[point["geom"]])
+                gdf.to_file(geo_data_folder / f"sammelstelle_{cleaned_name}.shp")
+                found = True
+                break
         counter += 1
     
     result = []
     for collection_point in geodata_list:
         calculation_dict = {"name":collection_point["name"], "population":0}
-        gdf = gpd.GeoDataFrame(index=[0], crs='epsg:4326', geometry=[collection_point["polygon"]])
-        gdf.to_file(output / "sammelstelle.shp")
         for population in location_dict.values():
             if collection_point["polygon"].intersects(population["geometry"]):
                 factor = ((population["geometry"].intersection(collection_point["polygon"]).area/population["geometry"].area))
@@ -106,3 +121,4 @@ for glass_type in ["weisglas","braunglas","grunglas"]:
         for row in result:
             # insert = {"name": row["name"],"population":row["years"][year]}
             dict_writer.writerow(row)
+    break
