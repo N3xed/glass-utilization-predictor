@@ -33,7 +33,7 @@ for glass_type in ["weisglas","braunglas","grunglas"]:
     
     temp_dict = {}
     for index, data in data_slopes.iterrows():
-        temp_dict[data["name"]] = {"slope":data["slope"]}
+        temp_dict[data["name"]] = {"slope":data["slope (fullness/day)"]}
         
     
     for index, data in data_population.iterrows():
@@ -49,6 +49,14 @@ for glass_type in ["weisglas","braunglas","grunglas"]:
     
     np_x = np.array(x)
     np_y = np.array(y)
-    plt.scatter()
+    # plt.scatter(np_x, np_y)
+    # plt.show()
+    
+    correlation_coefficient = np.corrcoef(np_x, np_y)[0, 1]
+
+    plt.scatter(np_x, np_y, label=f'Correlation: {correlation_coefficient:.2f}')
+    plt.legend()
+    plt.title(f"{glass_type}")
+    plt.show()
     
     
