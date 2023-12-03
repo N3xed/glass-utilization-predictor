@@ -9,7 +9,10 @@
 - Splitten der Daten in Perioden zwischen Entleerungen
 - Trainieren eines linearen Modells mit linearer Regression
 
-![graphs of trained model](img/weissglas.png)
+- Graphen von den Trainieren Modellen
+    - [Weisglas](img/weissglas.png)
+    - [Grünglas](img/grünglas.png)
+    - [Braunglas](img/braunglas.png)
 
 ## Aufbau des Repos
 
